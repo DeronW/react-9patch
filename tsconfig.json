@@ -1,0 +1,13 @@
+{
+    "include": ["src"],
+    "exclude": ["node_modules"],
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "isolatedModules": true,
+        "jsx": "react",
+        "declaration": true,
+        "outDir": "dist"
+    }
+}
