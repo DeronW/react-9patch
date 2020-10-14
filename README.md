@@ -2,9 +2,15 @@
 
 Inspired by Android 9patch.
 
+I was writing a show case played in a 4k television screen, some familiar component has almost same background image except different size. So I want to write a general component to hold these image, and auto scale with precise part.
+
 ### Usage
 
-I was writing a show case played in a 4k television screen, some familiar component has almost same background image except different size. So I want to write a general component to hold these image, and auto scale with precise part.
+https://www.npmjs.com/package/react-9patch
+
+```shell
+npm install react-9patch
+```
 
 ### Example
 
@@ -26,6 +32,10 @@ function Frame() {
     );
 }
 ```
+
+[!demo](https://raw.githubusercontent.com/DeronW/react-9patch/master/images/1.png)
+
+A grid layout container filled by cell, and each of it contain a part of background image (not real cut off a part, just show an part as background image), and these cells compose a complete image background. When resize the container, all cells will auto adjust themselves, some fixed, some sacle vertical, some scale horizon, and then, one generic background container (a border frame or something) is at your service.
 
 ### Parameters
 
