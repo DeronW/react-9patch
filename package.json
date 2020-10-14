@@ -1,18 +1,35 @@
 {
+    "name": "react-9patch",
+    "version": "0.0.1",
+    "description": "A react component offer a container with a image which scale like 9path",
+    "keywords": [
+        "9patch"
+    ],
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DeronW/react-9patch"
+    },
     "author": "delong",
     "email": "w.del@qq.com",
+    "files": [
+        "lib/*"
+    ],
+    "main": "lib/index.js",
     "scripts": {
-        "test": "echo test",
-        "build": "rm -r ./dist; webpack"
+        "build": "rm -r ./lib; webpack"
     },
     "devDependencies": {
         "@types/react": "16.9.51",
+        "css-loader": "^5.0.0",
         "jest": "26.4.2",
-        "react": "16.13.1",
         "react-dom": "16.13.1",
         "ts-loader": "8.0.4",
         "typescript": "4.0.3",
         "webpack": "4.44.2",
         "webpack-cli": "3.3.12"
+    },
+    "peerDependencies": {
+        "react": "16.13.1"
     }
 }

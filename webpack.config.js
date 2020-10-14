@@ -11,15 +11,20 @@ module.exports = {
                 use: "ts-loader",
                 exclude: /node_modules/,
             },
+            {
+                test: /\.css$/,
+                use: "css-loader",
+            },
         ],
     },
     resolve: {
         extensions: [".tsx", ".ts", ".js"],
     },
     output: {
-        path: path.resolve(__dirname, "dist"),
-        filename: "lib.js",
-        // library: "react-9patch",
+        path: path.resolve(__dirname, "lib"),
+        filename: "index.js",
+        library: "NinePatch",
+        libraryTarget: "umd",
     },
     externals: ["react"],
 };

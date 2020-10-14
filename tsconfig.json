@@ -8,6 +8,11 @@
         "isolatedModules": true,
         "jsx": "react",
         "declaration": true,
-        "outDir": "dist"
+        "outDir": "lib",
+        "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "importHelpers": true,
+        "esModuleInterop": true
     }
 }

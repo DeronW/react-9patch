@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { ReactElement, useState } from "react";
 import type { SyntheticEvent, CSSProperties } from "react";
+import "./index.css";
 
 type Tuple = [number, number];
 
@@ -7,8 +8,14 @@ interface NinePatchProps {
     img: string;
     x: Tuple | Array<Tuple>;
     y: Tuple | Array<Tuple>;
-    contentX: Tuple;
-    contentY: Tuple;
+    contentX?: Tuple;
+    contentY?: Tuple;
+    override?: boolean;
+    showRuler?: boolean;
+    className?: string;
+    width?: string | number;
+    height?: string | number;
+    children?: ReactElement;
 }
 
 interface PatchProps {
@@ -21,10 +28,10 @@ interface PatchProps {
     y: number;
     w: number;
     h: number;
-    no: number;
+    showRuler: boolean;
 }
 
-function Patch({ no, image, flex, x, y, w, h }: PatchProps) {
+function Patch({ image, flex, x, y, w, h, showRuler }: PatchProps) {
     let sizeX = flex.horizon ? 100 / w + "%" : image.width + "px",
         sizeY = flex.vertical ? 100 / h + "%" : image.height + "px",
         backgroundSize = `${sizeX} ${sizeY}`;
@@ -34,22 +41,51 @@ function Patch({ no, image, flex, x, y, w, h }: PatchProps) {
 
     let style: CSSProperties = {
         backgroundImage: `url(${image.src})`,
+        position: "relative",
         backgroundRepeat: "no-repeat",
         backgroundPosition: `${left} ${top}`,
         backgroundSize,
-        boxShadow: "0 0 1px black",
+        boxShadow: showRuler ? "0 0 1px black" : null,
     };
-    return <div style={style}>{no}</div>;
+
+    let getStyle = (bg: string): CSSProperties => ({
+        position: "absolute",
+        top: "0",
+        left: "0",
+        width: "100%",
+        height: "100%",
+        opacity: "0.5",
+        background: bg,
+    });
+
+    let yellow =
+        showRuler && flex.horizon ? (
+            <div style={getStyle("#ffff00")}></div>
+        ) : null;
+
+    let blue =
+        showRuler && flex.vertical ? (
+            <div style={getStyle("#0000ff")}></div>
+        ) : null;
+
+    return (
+        <div style={style} className="">
+            {yellow}
+            {blue}
+        </div>
+    );
 }
 
 function Patches({
     image,
     columns,
     rows,
+    showRuler,
 }: {
     image: HTMLImageElement;
     columns: Rule;
     rows: Rule;
+    showRuler: boolean;
 }) {
     let patches: Array<Omit<PatchProps, "image">> = [];
 
@@ -57,7 +93,7 @@ function Patches({
     for (let r of rows) {
         for (let c of columns) {
             patches.push({
-                no: i++,
+                showRuler,
                 flex: {
                     vertical: r.flexable,
                     horizon: c.flexable,
@@ -116,14 +152,28 @@ function toRule(arr: Tuple | Array<Tuple>): Rule {
     return rule;
 }
 
-function NinePatch({ img, x, y, contentX, contentY }: NinePatchProps) {
+function NinePatch({
+    img,
+    x,
+    y,
+    override = false,
+    showRuler = false,
+    contentX,
+    contentY,
+    className,
+    children,
+    width,
+    height,
+}: NinePatchProps) {
     let [bgStyle, setBgStyle] = useState<CSSProperties>({
         visibility: "hidden",
     });
+    let [contentStyle, setContentStyle] = useState<CSSProperties>({});
     let [image, setImage] = useState<null | HTMLImageElement>();
 
     let columns = toRule(x),
         rows = toRule(y);
+
     function load(e: SyntheticEvent) {
         let image = e.target as HTMLImageElement;
         let gridTemplateColumns = columns
@@ -139,36 +189,52 @@ function NinePatch({ img, x, y, contentX, contentY }: NinePatchProps) {
                 })
                 .join(" ");
 
+        setImage(image);
         setBgStyle({
-            visibility: "visible",
+            display: "grid",
+            position: "absolute",
+            top: "0",
+            left: "0",
+            right: "0",
+            bottom: "0",
+            zIndex: override ? 1 : -1,
+            // pointerEvents: "none",
             gridTemplateColumns,
             gridTemplateRows,
         });
-        setImage(image);
+
+        let [cL, cR] = contentX,
+            [cT, cB] = contentY;
+
+        setContentStyle({
+            backgroundColor: showRuler ? "rgba(0, 0, 0, 0.3)" : null,
+            marginTop: cT * image.height + "px",
+            marginLeft: cL * image.width + "px",
+            marginRight: (1 - cR) * image.width + "px",
+            marginBottom: (1 - cB) * image.height + "px",
+        });
     }
 
+    let outterStyle: CSSProperties = {
+        position: "relative",
+        display: "table",
+        width: typeof width == "number" ? width + "px" : width,
+        height: typeof height == "number" ? height + "px" : height,
+    };
+
     return (
-        <div
-            style={Object.assign(
-                {
-                    display: "grid",
-                    position: "relative",
-                },
-                bgStyle
-            )}
-        >
-            <img hidden src={img} onLoad={load} />
-            {image && <Patches image={image} columns={columns} rows={rows} />}
-            <div
-                style={{
-                    position: "absolute",
-                }}
-            >
-                {/* {img}
-                {x}
-                {y}
-                {contentX}
-                {contentY} */}
+        <div className={className} style={outterStyle}>
+            <div style={contentStyle}>{children}</div>
+            <div style={bgStyle}>
+                <img hidden src={img} onLoad={load} />
+                {image && (
+                    <Patches
+                        image={image}
+                        columns={columns}
+                        rows={rows}
+                        showRuler={showRuler}
+                    />
+                )}
             </div>
         </div>
     );
