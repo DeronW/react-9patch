@@ -33,7 +33,7 @@ function Frame() {
 }
 ```
 
-[!demo](https://raw.githubusercontent.com/DeronW/react-9patch/master/images/1.png)
+![demo](https://raw.githubusercontent.com/DeronW/react-9patch/master/images/1.png)
 
 A grid layout container filled by cell, and each of it contain a part of background image (not real cut off a part, just show an part as background image), and these cells compose a complete image background. When resize the container, all cells will auto adjust themselves, some fixed, some sacle vertical, some scale horizon, and then, one generic background container (a border frame or something) is at your service.
 
